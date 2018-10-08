@@ -316,3 +316,33 @@ public struct ReusableViewConfig<Item, Cell: ReusableViewProtocol>: ReusableView
         return viewConfigurator(view, item, type, parentView, indexPath)
     }
 }
+
+public struct SectionDependingViewConfig<Item, Cell: ReusableViewProtocol>: ReusableViewConfigProtocol {
+    
+    typealias ReuseIdentifierConfigurator = (Int) -> String
+    typealias ViewConfigurator = (Cell, Item?, ReusableViewType, Cell.ParentView, IndexPath) -> Cell
+    
+    /// The type of the reusable view.
+    let type: ReusableViewType
+    
+    /// A closure used to configure the views.
+    let viewConfigurator: ViewConfigurator
+    
+    let reuseIdentifierConfigurator: ReuseIdentifierConfigurator
+    
+    init(reuseIdentifierConfigurator: @escaping ReuseIdentifierConfigurator, viewConfigurator: @escaping ViewConfigurator, type: ReusableViewType) {
+        self.type = type
+        self.reuseIdentifierConfigurator = reuseIdentifierConfigurator
+        self.viewConfigurator = viewConfigurator
+        
+    }
+    
+    public func reuseIdentiferFor(item: Item?, type: ReusableViewType, indexPath: IndexPath) -> String {
+        return reuseIdentifierConfigurator(indexPath.section)
+    }
+    
+    public func configure(view: Cell, item: Item?, type: ReusableViewType, parentView: Cell.ParentView, indexPath: IndexPath) -> Cell {
+        assert(self.type == type)
+        return viewConfigurator(view, item, type, parentView, indexPath)
+    }
+}

@@ -8,6 +8,7 @@ disabled_rules:
   # metrics
   - nesting
   - function_parameter_count
+  - trailing_whitespace  
 
   # lint
   - notification_center_detachment
